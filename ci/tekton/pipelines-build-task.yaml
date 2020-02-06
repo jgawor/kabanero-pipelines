@@ -76,11 +76,11 @@ spec:
           else
             sed -i -e 's/HOST/$(inputs.params.hostname).$(inputs.params.clusterSubdomain)/' $YAML_FILE
           fi
+          sed -i -e "s/pipelines-index/pipelines-index-$INDEX_VERSION/" $YAML_FILE
           sed -i -e "s/REGISTRY/$IMAGE_REGISTRY/" $YAML_FILE
           sed -i -e "s/NAMESPACE/$IMAGE_REGISTRY_ORG/" $YAML_FILE
           sed -i -e "s/IMAGE/$INDEX_IMAGE/" $YAML_FILE
           sed -i -e "s/TAG/$INDEX_VERSION/" $YAML_FILE
-          sed -i -e "s/pipelines-index/pipelines-index-$INDEX_VERSION/" $YAML_FILE
           sed -i -e "s/DATE/$(date --utc '+%FT%TZ')/" $YAML_FILE
           kubectl apply --validate=false -f $YAML_FILE
 

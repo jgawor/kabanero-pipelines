@@ -23,8 +23,14 @@ spec:
         image: REGISTRY/NAMESPACE/IMAGE:TAG
         imagePullPolicy: Always
         ports:
-        - containerPort: 8080
         - containerPort: 8443
+        volumeMounts:
+        - mountPath: /etc/tls/private
+          name: pipelines-index-tls
+      volumes:
+      - name: pipelines-index-tls
+        secret:
+          secretName: pipelines-index-tls
 ---
 apiVersion: v1
 kind: Service
@@ -32,19 +38,17 @@ metadata:
   name: pipelines-index
   labels:
     app: pipelines-index
+  annotations:
+    service.alpha.openshift.io/serving-cert-secret-name: pipelines-index-tls
 spec:
   type: ClusterIP
   selector:
     app: pipelines-index
   ports:
-  - name: http
-    port: 8080
-    targetPort: 8080
-    protocol: TCP
   - name: https
     port: 8443
     targetPort: 8443
-    protocol: TCP    
+    protocol: TCP
 ---
 apiVersion: route.openshift.io/v1
 kind: Route
@@ -55,3 +59,6 @@ spec:
   to:
     kind: Service
     name: pipelines-index
+  tls:
+    termination: Reencrypt
+    insecureEdgeTerminationPolicy: Redirect
