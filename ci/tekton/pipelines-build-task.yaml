@@ -47,7 +47,7 @@ spec:
           export IMAGE_REGISTRY="$(inputs.params.registry)"
           export IMAGE_REGISTRY_ORG="$(inputs.params.registryNamespace)"
           export INDEX_IMAGE="$(inputs.params.indexImage)"
-          export IMAGE_VERSION=$(echo '$(inputs.resources.git-source.revision)' | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:].-')
+          export INDEX_VERSION=$(echo '$(inputs.resources.git-source.revision)' | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:].-')
           export IMAGE_REGISTRY_PUBLISH="true"
           cd /workspace/git-source/
           ./ci/package.sh
@@ -68,7 +68,7 @@ spec:
           export IMAGE_REGISTRY="$(inputs.params.registry)"
           export IMAGE_REGISTRY_ORG="$(inputs.params.registryNamespace)"
           export INDEX_IMAGE="$(inputs.params.indexImage)"
-          export IMAGE_VERSION=$(echo '$(inputs.resources.git-source.revision)' | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:].-')
+          export INDEX_VERSION=$(echo '$(inputs.resources.git-source.revision)' | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:].-')
 
           YAML_FILE=/workspace/git-source/ci/tekton/openshift.yaml
           if [ -z "$(inputs.params.clusterSubdomain)" ]; then
@@ -79,8 +79,8 @@ spec:
           sed -i -e "s/REGISTRY/$IMAGE_REGISTRY/" $YAML_FILE
           sed -i -e "s/NAMESPACE/$IMAGE_REGISTRY_ORG/" $YAML_FILE
           sed -i -e "s/IMAGE/$INDEX_IMAGE/" $YAML_FILE
-          sed -i -e "s/TAG/$IMAGE_VERSION/" $YAML_FILE
-          sed -i -e "s/pipelines-index/pipelines-index-$IMAGE_VERSION/" $YAML_FILE
+          sed -i -e "s/TAG/$INDEX_VERSION/" $YAML_FILE
+          sed -i -e "s/pipelines-index/pipelines-index-$INDEX_VERSION/" $YAML_FILE
           sed -i -e "s/DATE/$(date --utc '+%FT%TZ')/" $YAML_FILE
           kubectl apply --validate=false -f $YAML_FILE
 

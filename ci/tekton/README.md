@@ -11,29 +11,43 @@ Use these steps to trigger a Tekton pipeline build of your collections repositor
     oc -n kabanero adm policy add-scc-to-user privileged -z pipelines-index
     ```
 
-1. Create `tekton/pipelines-build-task-run.yaml` file with the following contents. Modify the the `revision` and `url` parameters with your Kabanero collections repository information. Optionally, provide the `clusterSubdomain` parameter that specifies the subdomain for your cluster:
+1. Create `pipelines-build-git-resource.yaml` file with the following contents. Modify `revision` and `url` properties as needed. 
     ```
     apiVersion: tekton.dev/v1alpha1
-    kind: TaskRun
+    kind: PipelineResource
     metadata:
-      name: pipelines-build-task-run
+      name: pipelines-build-git-resource
     spec:
+      params:
+      - name: revision
+        value: master
+      - name: url
+        value: https://github.com/kabanero-io/kabanero-pipelines.git
+      type: git
+    ```
+
+1. Deploy the `pipelines-build-git-resource.yaml` file via `oc -n kabanero apply -f pipelines-build-git-resource.yaml`
+
+1. Create `pipelines-build-pipelinerun.yaml` file with the following contents.
+
+    ```
+    apiVersion: tekton.dev/v1alpha1
+    kind: PipelineRun
+    metadata:
+      name: pipelines-build-pipelinerun
+      namespace: kabanero
+    spec:
+      pipelineRef:
+        name: pipelines-build-pipeline
+      resources:
+      - name: git-source
+        resourceRef:
+          name: pipelines-build-git-resource
+      params:
+        - name: registry
+          value: foobar
       serviceAccount: pipelines-index
-      taskRef:
-        name: pipelines-build-task
-      inputs:
-        resources:
-          - name: git-source
-            resourceSpec:
-              type: git
-              params:
-                - name: revision
-                  value: master
-                - name: url
-                  value: https://github.com/kabanero-io/kabanero-pipelines.git
-        params:
-          - name: clusterSubdomain
-            value: example.com
+      timeout: 60m
     ```
 
 1. If you are using GitHub Enterprise, [create a secret](https://github.com/tektoncd/pipeline/blob/master/docs/auth.md#basic-authentication-git) and associate it with the `pipelines-index` service account. For example:
@@ -41,11 +55,11 @@ Use these steps to trigger a Tekton pipeline build of your collections repositor
     oc -n kabanero secrets link pipelines-index basic-user-pass
     ```
 
-1. Trigger build
+1. Trigger pipeline
     ```
-    oc -n kabanero delete --ignore-not-found -f tekton/pipelines-build-task-run.yaml
+    oc -n kabanero delete --ignore-not-found -f pipelines-build-pipelinerun.yaml
     sleep 5
-    oc -n kabanero apply -f tekton/pipelines-build-task-run.yaml
+    oc -n kabanero apply -f pipelines-build-pipelinerun.yaml
     ```
 
     You can track the pipeline execution in the Tekton dashboard or via CLI:
