@@ -10,11 +10,11 @@ spec:
     params:
       - name: registry
         type: string
-        description: Docker registry
+        description: Container registry
         default: image-registry.openshift-image-registry.svc:5000
-      - name: namespace
+      - name: registryNamespace
         type: string
-        description: Namespace
+        description: Container registry namespace
         default: kabanero
       - name: hostname
         type: string
@@ -45,8 +45,9 @@ spec:
           export USE_BUILDAH="true"
           export BUILDAH_FORMAT="docker"
           export IMAGE_REGISTRY="$(inputs.params.registry)"
-          export IMAGE_REGISTRY_ORG="$(inputs.params.namespace)"
+          export IMAGE_REGISTRY_ORG="$(inputs.params.registryNamespace)"
           export INDEX_IMAGE="$(inputs.params.indexImage)"
+          export INDEX_VERSION="$(inputs.resources.git-source.revision)"
           export IMAGE_REGISTRY_PUBLISH="true"
           cd /workspace/git-source/
           ./ci/package.sh
@@ -71,9 +72,9 @@ spec:
             sed -i -e 's/HOST/$(inputs.params.hostname).$(inputs.params.clusterSubdomain)/' $YAML_FILE
           fi
           sed -i -e 's/REGISTRY/$(inputs.params.registry)/' $YAML_FILE
-          sed -i -e 's/NAMESPACE/$(inputs.params.namespace)/' $YAML_FILE
+          sed -i -e 's/NAMESPACE/$(inputs.params.registryNamespace)/' $YAML_FILE
           sed -i -e 's/IMAGE/$(inputs.params.indexImage)/' $YAML_FILE
-          sed -i -e 's/TAG/latest/' $YAML_FILE
+          sed -i -e 's/TAG/$(inputs.resources.git-source.revision)/' $YAML_FILE
           sed -i -e "s/DATE/$(date --utc '+%FT%TZ')/" $YAML_FILE
           kubectl apply --validate=false -f $YAML_FILE
 
