@@ -1,5 +1,5 @@
 
-Use these steps to trigger a Tekton pipeline build of your collections repository. The pipeline will build the collections and deploy a `pipelines-index` container into your cluster. The `pipelines-index` container hosts the Kabanero collections index file and related assets.
+Use these steps to trigger a Tekton pipeline build of your pipelines repository. The pipeline will build the pipelines and deploy a `pipelines-index` container into your cluster. The `pipelines-index` container hosts the Kabanero pipeline artifacts.
 
 1. Deploy pipeline
     ```
@@ -67,13 +67,13 @@ Use these steps to trigger a Tekton pipeline build of your collections repositor
     oc -n kabanero logs $(oc -n kabanero get pod -o name -l tekton.dev/task=pipelines-build-task) --all-containers -f 
     ```
 
-   After the build completes successfully, a `pipelines-index` container is deployed into your cluster.
+   After the build completes successfully, a `pipelines-index-<git-revision>` container is deployed into your cluster.
 
-1. Get the route for the `pipelines-index` pod and use it to generate a collections URL:
+1. Get the route for the `pipelines-index-<git-revision>` pod and use it to generate a collections URL:
 
     ```
-    COLLECTIONS_URL=$(oc -n kabanero get route pipelines-index --no-headers -o=jsonpath='http://{.status.ingress[0].host}/pipelines-index.yaml')
-    echo $COLLECTIONS_URL
+    PIPELINES_URL=$(oc -n kabanero get route pipelines-index-<git-revision> --no-headers -o=jsonpath='https://{.status.ingress[0].host}/default-kabanero-pipelines.tar.gz')
+    echo $PIPELINES_URL
     ```
 
-1. Follow the [configuring a Kabanero CR instance](https://kabanero.io/docs/ref/general/configuration/kabanero-cr-config.html) documentation to configure or deploy a Kabanero instance with the `COLLECTIONS_URL` obtained in the previous step. 
+1. Follow the [configuring a Kabanero CR instance](https://kabanero.io/docs/ref/general/configuration/kabanero-cr-config.html) documentation to configure or deploy a Kabanero instance with the `PIPELINES_URL` obtained in the previous step. 
