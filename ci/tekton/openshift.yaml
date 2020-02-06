@@ -2,25 +2,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kabanero-index
+  name: pipelines-index
   labels:
-    app: kabanero-index
+    app: pipelines-index
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kabanero-index
+      app: pipelines-index
   template:
     metadata:
       labels:
-        app: kabanero-index
+        app: pipelines-index
       annotations:
         date: "DATE"
         sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: nginx
-        image: REGISTRY/NAMESPACE/kabanero-index:TAG
+        image: REGISTRY/NAMESPACE/IMAGE:TAG
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -31,13 +31,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: kabanero-index
+  name: pipelines-index
   labels:
-    app: kabanero-index
+    app: pipelines-index
 spec:
   type: ClusterIP
   selector:
-    app: kabanero-index
+    app: pipelines-index
   ports:
   - name: http
     port: 8080
@@ -47,9 +47,9 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: kabanero-index
+  name: pipelines-index
 spec:
   host: HOST
   to:
     kind: Service
-    name: kabanero-index
+    name: pipelines-index

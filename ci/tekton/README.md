@@ -50,7 +50,7 @@ Use these steps to trigger a Tekton pipeline build of your collections repositor
 
     You can track the pipeline execution in the Tekton dashboard or via CLI:
     ```
-    oc -n kabanero logs $(oc -n kabanero get pod -o name -l tekton.dev/task=collections-build-task) --all-containers -f 
+    oc -n kabanero logs $(oc -n kabanero get pod -o name -l tekton.dev/task=pipelines-build-task) --all-containers -f 
     ```
 
    After the build completes successfully, a `pipelines-index` container is deployed into your cluster.

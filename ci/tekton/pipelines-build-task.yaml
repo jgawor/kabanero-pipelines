@@ -24,6 +24,10 @@ spec:
         type: string
         default: ""
         description: Cluster subdomain
+      - name: indexImage
+        type: string
+        description: Name of the pipelines index image
+        default: pipelines-index        
 
   steps:
     - name: build-pipelines
@@ -42,6 +46,7 @@ spec:
           export BUILDAH_FORMAT="docker"
           export IMAGE_REGISTRY="$(inputs.params.registry)"
           export IMAGE_REGISTRY_ORG="$(inputs.params.namespace)"
+          export INDEX_IMAGE="$(inputs.params.indexImage)"
           export IMAGE_REGISTRY_PUBLISH="true"
           cd /workspace/git-source/
           ./ci/package.sh
@@ -67,6 +72,7 @@ spec:
           fi
           sed -i -e 's/REGISTRY/$(inputs.params.registry)/' $YAML_FILE
           sed -i -e 's/NAMESPACE/$(inputs.params.namespace)/' $YAML_FILE
+          sed -i -e 's/IMAGE/$(inputs.params.indexImage)/' $YAML_FILE
           sed -i -e 's/TAG/latest/' $YAML_FILE
           sed -i -e "s/DATE/$(date --utc '+%FT%TZ')/" $YAML_FILE
           kubectl apply --validate=false -f $YAML_FILE
