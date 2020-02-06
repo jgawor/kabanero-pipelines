@@ -1,7 +1,7 @@
 #!/bin/sh
 
 CONF_FILE=
-if [ "$USE_HTTPS" = "true" ]; then
+if [ -f "/etc/tls/private/tls.crt" -a -f  "/etc/tls/private/tls.key" ]; then
     CONF_FILE="-c nginx-ssl.conf"
 fi
 

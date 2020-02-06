@@ -24,9 +24,7 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
-        env:
-        - name: EXTERNAL_URL
-          value: "http://HOST"
+        - containerPort: 8443
 ---
 apiVersion: v1
 kind: Service
@@ -43,6 +41,10 @@ spec:
     port: 8080
     targetPort: 8080
     protocol: TCP
+  - name: https
+    port: 8443
+    targetPort: 8443
+    protocol: TCP    
 ---
 apiVersion: route.openshift.io/v1
 kind: Route
