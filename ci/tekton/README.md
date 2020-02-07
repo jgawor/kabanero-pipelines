@@ -28,13 +28,13 @@ Use these steps to trigger a Tekton pipeline build of your pipelines repository.
 
 1. Deploy the `pipelines-build-git-resource.yaml` file via `oc -n kabanero apply -f pipelines-build-git-resource.yaml`
 
-1. Create `pipelines-build-pipelinerun.yaml` file with the following contents.
+1. Create `pipelines-build-pipeline-run.yaml` file with the following contents.
 
     ```
     apiVersion: tekton.dev/v1alpha1
     kind: PipelineRun
     metadata:
-      name: pipelines-build-pipelinerun
+      name: pipelines-build-pipeline-run
       namespace: kabanero
     spec:
       pipelineRef:
@@ -57,9 +57,9 @@ Use these steps to trigger a Tekton pipeline build of your pipelines repository.
 
 1. Trigger pipeline
     ```
-    oc -n kabanero delete --ignore-not-found -f pipelines-build-pipelinerun.yaml
+    oc -n kabanero delete --ignore-not-found -f pipelines-build-pipeline-run.yaml
     sleep 5
-    oc -n kabanero apply -f pipelines-build-pipelinerun.yaml
+    oc -n kabanero apply -f pipelines-build-pipeline-run.yaml
     ```
 
     You can track the pipeline execution in the Tekton dashboard or via CLI:
