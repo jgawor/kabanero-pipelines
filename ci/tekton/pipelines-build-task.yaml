@@ -18,7 +18,7 @@ spec:
         default: kabanero
       - name: hostname
         type: string
-        description: Hostname of the application hosting collections
+        description: Hostname of the application hosting pipeline assets
         default: pipelines-index
       - name: clusterSubdomain
         type: string

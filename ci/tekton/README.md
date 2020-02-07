@@ -44,8 +44,8 @@ Use these steps to trigger a Tekton pipeline build of your pipelines repository.
         resourceRef:
           name: pipelines-build-git-resource
       params:
-        - name: registry
-          value: foobar
+        - name: deploymentSuffix
+          value: latest
       serviceAccount: pipelines-index
       timeout: 60m
     ```
@@ -67,12 +67,12 @@ Use these steps to trigger a Tekton pipeline build of your pipelines repository.
     oc -n kabanero logs $(oc -n kabanero get pod -o name -l tekton.dev/task=pipelines-build-task) --all-containers -f 
     ```
 
-   After the build completes successfully, a `pipelines-index-<git-revision>` container is deployed into your cluster.
+   After the build completes successfully, a `pipelines-index-latest` container is deployed into your cluster.
 
-1. Get the route for the `pipelines-index-<git-revision>` pod and use it to generate a collections URL:
+1. Get the route for the `pipelines-index-latest` pod and use it to generate pipelines URL:
 
     ```
-    PIPELINES_URL=$(oc -n kabanero get route pipelines-index-<git-revision> --no-headers -o=jsonpath='https://{.status.ingress[0].host}/default-kabanero-pipelines.tar.gz')
+    PIPELINES_URL=$(oc -n kabanero get route pipelines-index-latest --no-headers -o=jsonpath='https://{.status.ingress[0].host}/default-kabanero-pipelines.tar.gz')
     echo $PIPELINES_URL
     ```
 
