@@ -87,7 +87,7 @@ spec:
         if [ $? -ne 0 ]; then
            echo "No versions of $STACK_NAME in $APPSODY_CONFIG are active in the cluster.  Stack cannot be built since $STACK_NAME is not active."
            echo "Stack messages = $?"
-           exit 1
+           exit 0
         fi
 
         # Check if the project names in the cfg file and active stack match
@@ -114,7 +114,7 @@ spec:
         if [ "$CLUSTER_PROJECT" != "$PROJECT" ]; then
             echo "Project name, $CLUSTER_PROJECT, of active stack in cluster and project name in the stack in $APPSODY_CONFIG, $PROJECT, do not match."
             echo "Validation failed. Stack cannot be built."
-            exit 1
+            exit 0
         fi
 
         # TODO add registry validation logic here.  Implictly handled by digest check.
@@ -135,7 +135,7 @@ spec:
         
         if [ -z "$TARGET_DIGEST" ]; then
            echo "$APPSODY_CONFIG specifies a stack version of $VERSION , but the image registry does not contain a version tagged with $VERSION, and cannot be built."
-           exit 1
+           exit 0
         fi
         
         for STACK_VERSION in ${CLUSTER_STACK_VERSIONS}
